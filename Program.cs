@@ -1,4 +1,6 @@
-﻿namespace PalindromeChecker
+﻿using System;
+
+namespace PalindromeChecker
 {
     internal class Program
     {
@@ -8,67 +10,77 @@
             do
             {
                 Console.Write("Enter a word or sentence: ");
-                string? userInput = Console.ReadLine();
-                if (string.IsNullOrEmpty(userInput) || string.IsNullOrWhiteSpace(userInput))
+                string? userInput = Console.ReadLine()?.Trim();
+
+                if (string.IsNullOrEmpty(userInput))
                 {
                     Console.WriteLine("Please type something!");
                 }
                 else
                 {
-                    Console.WriteLine(WordOrSentence(userInput) 
-                        ? $"\"{userInput}\" is{SpaceOrNot(IsPalindrome(userInput))}a palindrome." 
-                        : $"{userInput} is a sentence, and have{SpaceOrNot(HavePalindrome(userInput))}palindromes.");
+                    bool isSingleWord = IsSingleWord(userInput);
+                    bool isPalindrome = IsPalindrome(userInput);
+                    bool hasPalindrome = HasPalindrome(userInput);
+
+                    if (isSingleWord)
+                    {
+                        Console.WriteLine($"\"{userInput}\" is{SpaceOrNot(isPalindrome)} a palindrome.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\"{userInput}\" is a sentence and has{SpaceOrNot(hasPalindrome)} palindromes.");
+                    }
 
                     do
                     {
-                        Console.Write("\nDo you want to check more words or sentences? (y/n)");
-                        choice = Console.ReadLine();
+                        Console.Write("\nDo you want to check more words or sentences? (y/n) ");
+                        choice = Console.ReadLine()?.Trim().ToLower();
                         if (choice == "n")
-                            Console.WriteLine("Goodbye!");
-                        else if (choice == "y")
                         {
-                            break;
+                            Console.WriteLine("Goodbye!");
                         }
-                        else
+                        else if (choice != "y")
                         {
                             Console.WriteLine("\nPlease choose between (y/n).");
                         }
-                    } while (choice != "n");
-                }                
+                    } while (choice != "y" && choice != "n");
+                }
             } while (choice != "n");
         }
+
+        static bool IsSingleWord(string input)
+        {
+            return !input.Contains(" ");
+        }
+
         static bool IsPalindrome(string word)
         {
-            return WordComparer(word);
+            string reversed = new string(word.Reverse().ToArray());
+            return string.Equals(word, reversed, StringComparison.OrdinalIgnoreCase);
         }
-        static bool HavePalindrome(string words)
+
+        static bool HasPalindrome(string sentence)
         {
-            foreach (string word in WordsSpliter(words))
+            string[] words = WordsSplitter(sentence);
+            foreach (string word in words)
             {
-                if (WordComparer(word) && word.Length > 1)
+                if (IsPalindrome(word) && word.Length > 1)
+                {
                     return true;
+                }
             }
             return false;
         }
-        static string[] WordsSpliter(string sentence)
+
+        static string[] WordsSplitter(string sentence)
         {
-            char[] separators = new char[] { ' ', '.', ',', '!', ';', ':' };
+            char[] separators = { ' ', '.', ',', '!', ';', ':' };
             return sentence.Split(separators, StringSplitOptions.RemoveEmptyEntries);
         }
-        static bool WordOrSentence(string input)
-        {
-            return (WordsSpliter(input).Count() == 1);
-        }
+
         static string SpaceOrNot(bool input)
         {
-            return input ? " " : "not";
-        }
-        static bool WordComparer(string word)
-        {
-            string compare = "";
-            for (int i = word.Length - 1; i >= 0; i--)
-                compare += word[i];
-            return (String.Compare(word.ToLower(), compare.ToLower()) == 0);
+            return input ? " " : " not ";
         }
     }
 }
