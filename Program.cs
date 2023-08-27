@@ -53,16 +53,24 @@ namespace PalindromeChecker
         static bool IsSingleWord(string input)
         {
             // Check whether the user input word is a single word or not.
-            return !input.Contains(" ");
+            return !input.Contains(' ');
         }
 
         static bool IsPalindrome(string word)
         {
-            // Get the user input, reverse that word, input to array, and build a new string.
-            // Leverage the built-in method `string.Equals()` for comparing two strings (string a, string b).
-            // The third parameter tell method to use binary sorted between 2 strings and ignoring the case
-            // of strings being compared.
-            string reversed = new string(word.Reverse().ToArray());
+            // Summary:
+            //      Get the user input, reverse that word, input to array, and build a new string.
+            //      Leverage the built-in method `string.Equals()` for comparing two strings (string a, string b).
+            //      The third parameter tell method to use binary sorted between 2 strings and ignoring the case
+            //      of strings being compared.
+            // 
+            // Parameters:
+            //      word:
+            //          A word to check from user input whether it is palindrome or not.
+            // 
+            // Returns:
+            //      true if a word is palindrome.
+            string reversed = new(word.Reverse().ToArray());
             return string.Equals(word, reversed, StringComparison.OrdinalIgnoreCase);
         }
 
